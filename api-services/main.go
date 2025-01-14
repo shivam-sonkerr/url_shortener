@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"math/rand/v2"
 	"net/http"
 )
 
@@ -24,6 +25,17 @@ func urlPOST(c *gin.Context) {
 	fmt.Println("Received URL:", originalUrl.OriginalUrl)
 
 	return
+}
+
+func urlGenerator() {
+	random := rand.Int()
+
+	prefix := "simple-url"
+	fmt.Println(random)
+
+	concat := fmt.Sprintf("%s%d", prefix, random)
+
+	fmt.Println(concat)
 }
 
 func main() {
