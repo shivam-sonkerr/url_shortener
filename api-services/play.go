@@ -10,15 +10,15 @@ func urlGenerators() {
 	fmt.Println("Random Number is: ", random)
 }
 
-func urlGeneratorsa() {
-	random := rand.Int()
+func urlGeneratorsa() string {
 
+	random := rand.IntN(9000) + 1000
 	prefix := "simple-url"
 	fmt.Println(random)
 
-	concat := fmt.Sprintf("%s-%d", prefix, random)
+	shortURL := fmt.Sprintf("%s-%d", prefix, random)
 
-	fmt.Println(concat)
+	return shortURL
 }
 
 func main() {

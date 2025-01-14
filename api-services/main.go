@@ -27,15 +27,14 @@ func urlPOST(c *gin.Context) {
 	return
 }
 
-func urlGenerator() {
-	random := rand.Int()
+func urlGenerator() string {
+	random := rand.IntN(9000) + 1000
 
 	prefix := "simple-url"
 	fmt.Println(random)
 
-	concat := fmt.Sprintf("%s%d", prefix, random)
-
-	fmt.Println(concat)
+	shortURL := fmt.Sprintf("%s%d", prefix, random)
+	return shortURL
 }
 
 func main() {
