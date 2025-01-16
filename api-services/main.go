@@ -3,12 +3,14 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"math/rand/v2"
 	"net/http"
+	"net/url"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type URLMappings struct {
@@ -38,15 +40,32 @@ func addURL(db *sql.DB, original URLMappings) (int64, error) {
 	result, err := db.Exec(query, original.OriginalURL, original.ShortURL, original.CreatedAt)
 
 	if err != nil {
+		log.Printf("addURL error: %v,err")
 		return 0, fmt.Errorf("addURL: %v", err)
 	}
 
 	id, err := result.LastInsertId()
 
 	if err != nil {
+		log.Printf("addURL LastInsertID error: %v", err)
 		return 0, fmt.Errorf("addURL LastInsertId: %v", err)
 	}
+	log.Printf("addURL success: ID=%d, ShortURL=%s, OriginalURL=%s", id, original.ShortURL, original.OriginalURL)
 	return id, nil
+}
+
+func checkIfURLExists(db *sql.DB, shortURL string) (string, error) {
+
+	var originalURL string
+
+	query := `SELECT original_url FROM url_mappings WHERE short_url=?`
+
+	err := db.QueryRow(query, shortURL).Scan(&originalURL)
+
+	if err == sql.ErrNoRows {
+		return "", fmt.Errorf("shortURL %s does not exist", shortURL)
+	}
+	return originalURL, nil
 }
 
 func handlerPing(c *gin.Context) {
@@ -54,11 +73,50 @@ func handlerPing(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "pong"})
 }
 
+func redirectURLHandler(c *gin.Context) {
+
+	db, err := connectDB()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to connect to the database"})
+		return
+	}
+	defer db.Close() // Close the database connection after the handler completes
+
+	shortURL := c.Param("shortURL")
+
+	fmt.Println("Redirecting for shortURL:", shortURL) // log the shortURL to confirm
+
+	originalURL, err := checkIfURLExists(db, shortURL)
+
+	//if err != nil {
+	//	c.JSON(http.StatusNotFound, gin.H{"error": "NOT FOUND"})
+	//	return
+	//}
+
+	if originalURL == "" {
+		c.JSON(http.StatusNotFound, gin.H{"error": "shortURL has no valid mapping"})
+		return
+	}
+
+	c.Redirect(http.StatusMovedPermanently, originalURL)
+}
+
+func isValidURL(u string) bool {
+	_, err := url.ParseRequestURI(u)
+	return err == nil
+}
+
 func urlPOST(c *gin.Context) {
 	var request URLMappings
 
 	if err := c.BindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	// Validate the Original URL
+	if !isValidURL(request.OriginalURL) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid URL format"})
+		return
 	}
 
 	//checking if the provided URL is not empty
@@ -108,6 +166,9 @@ func urlPOST(c *gin.Context) {
 		"shortURL": shortURL,
 	})
 
+	fmt.Printf("New URL mapping added: %s -> %s\n", request.OriginalURL, shortURL)
+
+	c.Redirect(http.StatusMovedPermanently, fmt.Sprintf("http://localhost:8080/redirect/%s", shortURL))
 	//fmt.Println("Received URL:", originalUrl.OriginalURL)
 	return
 }
@@ -144,11 +205,18 @@ func main() {
 	}
 	defer db.Close()
 
+	err = initDB(db)
+	if err != nil {
+		log.Fatal("Failed to initialize database", err)
+	}
+
 	r := gin.Default()
 
 	r.GET("/ping", handlerPing)
 
 	r.POST("/shorten", urlPOST)
+
+	r.GET("/redirect/:shortURL", redirectURLHandler)
 
 	r.Run("localhost:8080")
 
