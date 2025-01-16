@@ -1,74 +1,16 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
+	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"math/rand/v2"
 	"net/http"
 	"net/url"
-	"time"
+	"url_shortener/dbutils"
 	"url_shortener/models"
-	_ "url_shortener/models"
-
-	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
 )
-
-//type URLMappings struct {
-//	ID          int64     `json:"id"`
-//	ShortURL    string    `json:"short_url"`
-//	OriginalURL string    `json:"original_url"`
-//	CreatedAt   time.Time `json:"created_at"`
-//}
-
-func connectDB() (*sql.DB, error) {
-	db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/url_mappings")
-
-	if err != nil {
-		return nil, err
-	}
-
-	err = db.Ping()
-	if err != nil {
-		return nil, err
-	}
-	return db, nil
-}
-
-func addURL(db *sql.DB, original models.URLMappings) (int64, error) {
-
-	query := `INSERT INTO url_mappings(original_url, short_url, created_at) VALUES (?, ?, ?)`
-	result, err := db.Exec(query, original.OriginalURL, original.ShortURL, original.CreatedAt)
-
-	if err != nil {
-		log.Printf("addURL error: %v,err")
-		return 0, fmt.Errorf("addURL: %v", err)
-	}
-
-	id, err := result.LastInsertId()
-
-	if err != nil {
-		log.Printf("addURL LastInsertID error: %v", err)
-		return 0, fmt.Errorf("addURL LastInsertId: %v", err)
-	}
-	log.Printf("addURL success: ID=%d, ShortURL=%s, OriginalURL=%s", id, original.ShortURL, original.OriginalURL)
-	return id, nil
-}
-
-func checkIfURLExists(db *sql.DB, shortURL string) (string, error) {
-
-	var originalURL string
-
-	query := `SELECT original_url FROM url_mappings WHERE short_url=?`
-
-	err := db.QueryRow(query, shortURL).Scan(&originalURL)
-
-	if err == sql.ErrNoRows {
-		return "", fmt.Errorf("shortURL %s does not exist", shortURL)
-	}
-	return originalURL, nil
-}
 
 func handlerPing(c *gin.Context) {
 
@@ -77,7 +19,7 @@ func handlerPing(c *gin.Context) {
 
 func redirectURLHandler(c *gin.Context) {
 
-	db, err := connectDB()
+	db, err := dbutils.ConnectDB()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to connect to the database"})
 		return
@@ -88,7 +30,7 @@ func redirectURLHandler(c *gin.Context) {
 
 	fmt.Println("Redirecting for shortURL:", shortURL) // log the shortURL to confirm
 
-	originalURL, err := checkIfURLExists(db, shortURL)
+	originalURL, err := dbutils.CheckIfURLExists(db, shortURL)
 
 	//if err != nil {
 	//	c.JSON(http.StatusNotFound, gin.H{"error": "NOT FOUND"})
@@ -129,7 +71,7 @@ func urlPOST(c *gin.Context) {
 	}
 
 	//connecting to the database
-	db, err := connectDB()
+	db, err := dbutils.ConnectDB()
 
 	//check to ensure that database connectivity is working fine.
 	if err != nil {
@@ -152,13 +94,7 @@ func urlPOST(c *gin.Context) {
 		}
 	}
 
-	newMapping := models.URLMappings{
-		OriginalURL: request.OriginalURL,
-		ShortURL:    shortURL,
-		CreatedAt:   time.Now(),
-	}
-
-	_, err = addURL(db, newMapping)
+	_, err = dbutils.AddURL(db, request.OriginalURL, shortURL)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save URL mapping"})
 	}
@@ -185,18 +121,18 @@ func urlGenerator() string {
 	return shortURL
 }
 
-func initDB(db *sql.DB) error {
-	query := `
-       CREATE TABLE IF NOT EXISTS url_mappings (
-           id BIGINT AUTO_INCREMENT PRIMARY KEY,
-           original_url TEXT NOT NULL,
-           short_url VARCHAR(255) NOT NULL UNIQUE,
-           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-       );
-   `
-	_, err := db.Exec(query)
-	return err
-}
+//func initDB(db *sql.DB) error {
+//	query := `
+//       CREATE TABLE IF NOT EXISTS url_mappings (
+//           id BIGINT AUTO_INCREMENT PRIMARY KEY,
+//           original_url TEXT NOT NULL,
+//           short_url VARCHAR(255) NOT NULL UNIQUE,
+//           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+//       );
+//   `
+//	_, err := db.Exec(query)
+//	return err
+//}
 
 func shortenAndRedirect(c *gin.Context) {
 	var request models.URLMappings
@@ -214,7 +150,7 @@ func shortenAndRedirect(c *gin.Context) {
 	}
 
 	// Connect to the database
-	db, err := connectDB()
+	db, err := dbutils.ConnectDB()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to connect to the database"})
 		return
@@ -237,12 +173,12 @@ func shortenAndRedirect(c *gin.Context) {
 	}
 
 	// Save the URL mapping in the database
-	newMapping := models.URLMappings{
-		OriginalURL: request.OriginalURL,
-		ShortURL:    shortURL,
-		CreatedAt:   time.Now(),
-	}
-	_, err = addURL(db, newMapping)
+	//newMapping := models.URLMappings{
+	//	OriginalURL: request.OriginalURL,
+	//	ShortURL:    shortURL,
+	//	CreatedAt:   time.Now(),
+	//}
+	_, err = dbutils.AddURL(db, request.OriginalURL, shortURL)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save URL mapping"})
 		return
@@ -254,14 +190,14 @@ func shortenAndRedirect(c *gin.Context) {
 
 func main() {
 
-	db, err := connectDB()
+	db, err := dbutils.ConnectDB()
 
 	if err != nil {
 		log.Fatal("Failed to connect to database", err)
 	}
 	defer db.Close()
 
-	err = initDB(db)
+	err = dbutils.InitDB(db)
 	if err != nil {
 		log.Fatal("Failed to initialize database", err)
 	}
