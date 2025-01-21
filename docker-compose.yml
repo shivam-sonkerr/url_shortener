@@ -12,7 +12,7 @@ services:
     environment:
       DB_HOST: db
       DB_USER: root
-      DB_ROOT_PASSWORD: root
+      DB_PASSWORD: root
       DB_NAME: url_mappings
 
   db:
@@ -25,6 +25,11 @@ services:
       MYSQL_ROOT_PASSWORD: root
     volumes:
       - db_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost --silent" ]
+      interval: 10s
+      retries: 3
 
 volumes:
   db_data:
+

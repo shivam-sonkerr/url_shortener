@@ -30,6 +30,6 @@ func main() {
 
 	r.POST("/shorten-and-redirect", handlers.ShortenAndRedirect)
 
-	r.Run("localhost:8080")
+	r.Run(":8080")
 
 }

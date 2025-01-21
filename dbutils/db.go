@@ -5,14 +5,24 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
+	"os"
 	_ "url_shortener/models"
 )
 
 func ConnectDB() (*sql.DB, error) {
+
+	// Retrieve environment variables
+	dbHost := os.Getenv("DB_HOST")
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", dbUser, dbPassword, dbHost, dbName)
+
 	// Connect to MySQL database
-	db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/url_mappings")
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
 	err = db.Ping()
