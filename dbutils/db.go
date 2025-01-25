@@ -5,17 +5,16 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
-	"os"
 	_ "url_shortener/models"
 )
 
 func ConnectDB() (*sql.DB, error) {
 
 	// Retrieve environment variables
-	dbHost := os.Getenv("DB_HOST")
-	dbUser := os.Getenv("DB_USER")
-	dbPassword := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
+	dbHost := "terraform-20250125015632356600000001.cre88gg2w0z7.us-east-2.rds.amazonaws.com"
+	dbUser := "url_shortener"
+	dbPassword := "fortheapp"
+	dbName := "url_mappings"
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", dbUser, dbPassword, dbHost, dbName)
 
