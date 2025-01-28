@@ -21,7 +21,7 @@ resource "aws_eks_cluster" "main" {
 resource "aws_eks_node_group" "workers" {
   cluster_name    = aws_eks_cluster.main.name
   node_group_name = "worker-nodes"
-  disk_size = 5
+  disk_size = 20
   node_role_arn   = "arn:aws:iam::339713031726:role/worker_nodes_role"  # Replace with an IAM role ARN
   subnet_ids      = module.vpc.private_subnet_ids
 
@@ -31,5 +31,5 @@ resource "aws_eks_node_group" "workers" {
     max_size     = 2
   }
 
-  instance_types = ["t2.micro"]  # Use a basic instance type
+  instance_types = ["t3.medium"]  # Use a basic instance type
 }
