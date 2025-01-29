@@ -14,7 +14,7 @@ jobs:
           fetch-depth: 0  # Ensures all files are fetched
 
       - name: Verify Files
-        run: ls -la  # Debugging: Check if go.mod and go.sum exist
+        run: ls -la
 
       - name: Set up Go
         uses: actions/setup-go@v4
