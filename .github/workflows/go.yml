@@ -8,7 +8,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Ensures all files are fetched
+
+      - name: Verify Files
+        run: ls -la  # Debugging: Check if go.mod and go.sum exist
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -16,7 +22,7 @@ jobs:
           go-version: '1.23'
 
       - name: Download Dependencies
-        run: go mod download
+        run: go mod tidy && go mod download  # Ensures go.sum is present
 
       - name: Build
         run: go build -o url-shortener ./api-services/main.go
