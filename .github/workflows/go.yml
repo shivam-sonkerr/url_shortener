@@ -38,4 +38,4 @@ jobs:
         run: docker build -t maverick8738/url-shortener:latest .
 
       - name: Push the image
-        run: docker push maverick8738/url-shortener:latest .
+        run: docker push maverick8738/url-shortener:latest
