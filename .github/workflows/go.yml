@@ -1,14 +1,10 @@
-
-
 name: Golang
 
 on:
   push:
     branches: ["main"]
 
-
 jobs:
-
   build:
     runs-on: ubuntu-latest
     steps:
@@ -19,8 +15,11 @@ jobs:
         with:
           go-version: '1.23'
 
-      - name: Build
-        run: go build -v ./...
+      - name: Download Dependencies
+        run: go mod download
 
-      - name: Test
+      - name: Build
+        run: go build -o url-shortener ./api-services/main.go
+
+      - name: Run Tests
         run: go test -v ./...

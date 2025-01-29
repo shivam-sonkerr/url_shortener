@@ -2,15 +2,12 @@
 FROM golang:alpine as builder
 LABEL authors="shivam"
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy go.mod, go.sum, and source code to the container
 COPY go.mod go.sum ./
 RUN go mod download
 COPY .. .
 
-# Build the Go application
 RUN go build -o url-shortener ./api-services/main.go
 
 # Stage 2: Create a lightweight runtime image
