@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
-	//"go.uber.org/zap"
 	"log"
 	"url_shortener/dbutils"
 	"url_shortener/handlers"
