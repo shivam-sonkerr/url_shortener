@@ -55,7 +55,7 @@ jobs:
 
       - name: Install Docker
         run: |
-          sudo yum install wget curl -y
+          sudo apt install wget curl -y
           curl -fsSL https://get.docker.com | sh
           sudo apt-get update
           sudo systemctl start docker
