@@ -49,7 +49,7 @@ resource "aws_db_subnet_group" "default" {
 resource "aws_db_instance" "default" {
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
   engine                 = "mysql"
-  instance_class         = "db.t4g.micro"
+  instance_class         = "db.t3.micro"
   db_name                = var.db_name
   allocated_storage      = var.allocated_storage
   engine_version         = "8.0.39"
