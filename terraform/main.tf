@@ -27,3 +27,4 @@ module "rds" {
   db_password       = "fortheapp"
   allocated_storage = 5
 }
+

@@ -102,10 +102,6 @@ resource "aws_route_table_association" "public" {
 }
 
 
-
-
-
-
 output "vpc_id" {
   value = aws_vpc.main.id
 }
