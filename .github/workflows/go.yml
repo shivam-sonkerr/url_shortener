@@ -35,6 +35,9 @@ jobs:
           aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           aws-region: ${{secrets.AWS_REGION}}
 
+      - name: Terraform Installation
+        uses: hashicorp/setup-terraform@v3
+
       - name: Check If EKS Cluster Exists
         id: check-cluster
         run: |
