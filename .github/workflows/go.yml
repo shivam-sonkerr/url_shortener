@@ -44,6 +44,7 @@ jobs:
         if: env.exists == 'false'
         run: |
           terraform init
+          terraform plan
           terraform apply -auto-approve
         working-directory: terraform
 
