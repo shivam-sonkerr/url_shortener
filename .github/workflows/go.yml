@@ -79,7 +79,7 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
-        working-directory: terraform
+        working-directory: terraform #defining the working directory for TF
 
       - name : Install kubectl for K8s
         run: |
