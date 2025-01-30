@@ -53,8 +53,9 @@ jobs:
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin
 
+      - name: Deployment
+        run: kubectl apply -f ./kubernetes
+
       - name: Kube config
         run: aws eks --region us-west-2 update-kubeconfig --name url-shortener
 
-      - name: Deployment
-        run: kubectl apply -f ./kubernetes
