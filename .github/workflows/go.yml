@@ -47,8 +47,31 @@ jobs:
           aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           aws-region: ${{secrets.AWS_REGION}}
 
+
+
       - name: Set Up Terraform
         uses: hashicorp/setup-terraform@v2
+
+      - name: Check If EKS Cluster Exists
+        id: check-cluster
+        run: |
+            if aws eks describe-cluster --name url-shortener --region us-west-2 > /dev/null 2>&1; then
+              echo "EKS cluster exists"
+              echo "exists=true" >> $GITHUB_ENV
+            else
+              echo "EKS cluster does not exist"
+              echo "exists=false" >> $GITHUB_ENV
+            fi
+
+      - name: Terraform Init
+        if: env.exists == 'false'
+        run: terraform init
+        working-directory: terraform
+
+      - name: Terraform Apply
+        if: env.exists == 'false'
+        run: terraform apply -auto-approve
+        working-directory: terraform
 
       - name: Terraform Init
         run: terraform init
