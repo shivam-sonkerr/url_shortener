@@ -30,3 +30,8 @@ variable "public_subnet_cidrs" {
 
 variable "eks_role_arn" {}
 variable "subnet_ids" {}
+
+variable "private_subnet_ids" {
+  description = "List of private subnet IDs for EKS worker nodes"
+  type        = list(string)
+}

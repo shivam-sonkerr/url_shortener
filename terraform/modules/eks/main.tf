@@ -1,3 +1,8 @@
+# variable "security_group_ids" {
+#   description = "Security group IDs to attach to EKS worker nodes"
+#   type        = list(string)
+# }
+
 
 
 resource "aws_eks_cluster" "main" {
@@ -6,7 +11,7 @@ resource "aws_eks_cluster" "main" {
 
   vpc_config {
     subnet_ids = var.subnet_ids
-    security_group_ids = []
+
   }
 }
 
@@ -15,7 +20,8 @@ resource "aws_eks_node_group" "workers" {
   node_group_name = "worker-nodes"
   disk_size = 20
   node_role_arn   = "arn:aws:iam::339713031726:role/worker_nodes_role"  # Replace with an IAM role ARN
-  subnet_ids      = var.subnet_ids
+  subnet_ids = var.private_subnet_ids
+
 
   scaling_config {
     desired_size = 1

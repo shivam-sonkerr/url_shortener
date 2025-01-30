@@ -30,13 +30,18 @@ resource "aws_security_group" "rds_sg" {
 
 
 resource "aws_db_subnet_group" "default" {
-  name       = "private-db-subnet-group"
+  name       = "private-db-subnet-group-${random_id.suffix.hex}"
   subnet_ids = var.subnet_ids
 
   tags = {
     Name = "private-db-subnet-group"
   }
 }
+
+resource "random_id" "suffix" {
+  byte_length = 8
+}
+
 
 resource "aws_db_instance" "default" {
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
