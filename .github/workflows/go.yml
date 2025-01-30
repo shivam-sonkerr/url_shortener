@@ -47,20 +47,21 @@ jobs:
           aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           aws-region: ${{secrets.AWS_REGION}}
 
+      - name: Set Up Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: terraform
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+
       - name : Install kubectl for K8s
         run: |
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin
-
-      - name: Install Docker
-        run: |
-          sudo apt install wget curl -y
-          curl -fsSL https://get.docker.com | sh
-          sudo apt-get update
-          sudo systemctl start docker
-          sudo systemctl enable docker
-
 
       - name: Deployment
         run: kubectl apply -f ./kubernetes
