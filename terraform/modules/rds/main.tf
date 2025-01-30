@@ -2,14 +2,6 @@ provider "aws" {
   region = "us-west-2"  # Adjust the region as needed
 }
 
-module "vpc" {
-  source               = "../vpc"
-  cidr_block           = var.cidr_block
-  private_subnet_count = var.private_subnet_count
-  private_subnet_cidrs = var.private_subnet_cidrs
-  public_subnet_count  = var.public_subnet_count
-  public_subnet_cidrs  = var.public_subnet_cidrs
-}
 
 
 
@@ -39,7 +31,7 @@ resource "aws_security_group" "rds_sg" {
 
 resource "aws_db_subnet_group" "default" {
   name       = "private-db-subnet-group"
-  subnet_ids = module.vpc.private_subnet_ids
+  subnet_ids = var.subnet_ids
 
   tags = {
     Name = "private-db-subnet-group"
@@ -49,7 +41,7 @@ resource "aws_db_subnet_group" "default" {
 resource "aws_db_instance" "default" {
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
   engine                 = "mysql"
-  instance_class         = "db.t3.micro"
+  instance_class         = "db.t3.medium"
   db_name                = var.db_name
   allocated_storage      = var.allocated_storage
   engine_version         = "8.0.39"

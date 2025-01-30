@@ -53,3 +53,10 @@ variable "allocated_storage" {
   type        = number
   default     = 5
 }
+
+
+# New variable to accept subnet_ids
+variable "subnet_ids" {
+  description = "The subnet IDs for the RDS instance"
+  type        = list(string)
+}

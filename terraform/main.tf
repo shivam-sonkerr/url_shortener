@@ -26,5 +26,8 @@ module "rds" {
   db_username       = "url_shortener"
   db_password       = "fortheapp"
   allocated_storage = 5
+  subnet_ids        = module.vpc.private_subnet_ids  # Ensure this line references the output
 }
+
+
 

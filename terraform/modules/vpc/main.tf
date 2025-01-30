@@ -35,40 +35,43 @@ resource "aws_subnet" "public" {
   }
 }
 
-# Allocate an Elastic IP for the NAT Gateway
-resource "aws_eip" "nat" {
-  vpc = true
-}
 
 # Create a NAT Gateway in one of the public subnets
+resource "aws_eip" "nat" {
+  count = var.private_subnet_count
+  vpc   = true
+}
+
 resource "aws_nat_gateway" "nat" {
-  allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public[0].id # Place NAT Gateway in the first public subnet
+  count         = var.private_subnet_count
+  allocation_id = element(aws_eip.nat[*].id, count.index)
+  subnet_id     = element(aws_subnet.public[*].id, count.index) # One NAT per AZ
 
   tags = {
-    Name = "nat-gateway"
+    Name = "nat-gateway-${count.index}"
   }
 }
-# Route Table for Private Subnets
+
 resource "aws_route_table" "private" {
+  count = var.private_subnet_count
   vpc_id = aws_vpc.main.id
 
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat.id
+    nat_gateway_id = element(aws_nat_gateway.nat[*].id, count.index)
   }
 
   tags = {
-    Name = "private-route-table"
+    Name = "private-route-table-${count.index}"
   }
 }
 
-# Associate Private Subnets with the Private Route Table
 resource "aws_route_table_association" "private" {
-  count          = length(aws_subnet.private)
+  count          = var.private_subnet_count
   subnet_id      = element(aws_subnet.private[*].id, count.index)
-  route_table_id = aws_route_table.private.id
+  route_table_id = element(aws_route_table.private[*].id, count.index)
 }
+
 
 
 # Internet Gateway
@@ -101,14 +104,4 @@ resource "aws_route_table_association" "public" {
   route_table_id = aws_route_table.public.id
 }
 
-
-output "vpc_id" {
-  value = aws_vpc.main.id
-}
-
-
-
-output "public_subnet_ids" {
-  value = aws_subnet.public[*].id
-}
 
