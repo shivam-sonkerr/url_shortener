@@ -35,3 +35,13 @@ variable "private_subnet_ids" {
   description = "List of private subnet IDs for EKS worker nodes"
   type        = list(string)
 }
+
+variable "vpc_id" {
+  description = "VPC ID where the EKS cluster is deployed"
+  type        = string
+}
+
+variable "vpc_cidr_block" {
+  description = "CIDR block of the VPC"
+  type        = string
+}

@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-west-2"  # Adjust the region as needed
+  region = var.aws_region  # Adjust the region as needed
 }
 
 
@@ -7,6 +7,7 @@ provider "aws" {
 
 
 resource "aws_security_group" "rds_sg" {
+  vpc_id = var.vpc_id
   name        = "rds-mysql-sg"
   description = "Allow MySQL inbound traffic from EKS nodes"
 
@@ -14,6 +15,7 @@ resource "aws_security_group" "rds_sg" {
     from_port       = 3306
     to_port         = 3306
     protocol        = "tcp"
+    security_groups = [var.eks_worker_sg_id]
   }
 
   egress {
@@ -46,17 +48,20 @@ resource "random_id" "suffix" {
 resource "aws_db_instance" "default" {
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
   engine                 = "mysql"
-  instance_class         = "db.t3.small"
+  instance_class         = "db.t4g.micro"
   db_name                = var.db_name
   allocated_storage      = var.allocated_storage
-  engine_version         = "8.0.35"
-  storage_type = "gp3"
+  engine_version = "8.0.39"
   skip_final_snapshot    = true
   username               = var.db_username
   password               = var.db_password
   publicly_accessible    = false
-  multi_az = false
+  db_subnet_group_name  = aws_db_subnet_group.default.name
+
   tags = {
     Name = "private-rds-instance"
   }
 }
+
+
+

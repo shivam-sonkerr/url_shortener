@@ -60,3 +60,28 @@ variable "subnet_ids" {
   description = "The subnet IDs for the RDS instance"
   type        = list(string)
 }
+
+
+
+variable "private_subnet_azs" {
+  description = "Availability Zones for private subnets"
+  type        = list(string)
+  default     = ["us-west-2a", "us-west-2b"]  # Explicitly define AZs
+}
+
+variable "eks_worker_sg_id" {
+  description = "Security group ID of EKS worker nodes"
+  type        = string
+}
+
+variable "aws_region" {
+  description = "AWS region for deployment"
+  type        = string
+  default     = "us-west-2"
+}
+
+
+variable "vpc_id" {
+  description = "VPC ID where the RDS instance is deployed"
+  type        = string
+}

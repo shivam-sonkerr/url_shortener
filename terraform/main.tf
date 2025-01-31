@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-west-2"  # Adjust the region as needed
+  region = var.aws_region  # Adjust the region as needed
 }
 
 resource "aws_security_group" "eks_worker_sg" {
@@ -24,6 +24,12 @@ resource "aws_security_group" "eks_worker_sg" {
   }
 }
 
+variable "aws_region" {
+  description = "AWS region for deployment"
+  type        = string
+  default     = "us-west-2"
+}
+
 
 
 
@@ -44,18 +50,23 @@ module "eks" {
   eks_role_arn       = "arn:aws:iam::339713031726:role/eks-cluster-role"
   subnet_ids = module.vpc.private_subnet_ids
   private_subnet_ids = module.vpc.private_subnet_ids
+  vpc_id            = module.vpc.vpc_id
+  vpc_cidr_block    = module.vpc.vpc_cidr_block
 }
 
 
 # RDS Module
 module "rds" {
-  source            = "./modules/rds"
-  db_name           = "url_mappings"
-  db_username       = "url_shortener"
-  db_password       = "fortheapp"
-  allocated_storage = 20
-  subnet_ids        = module.vpc.private_subnet_ids  # Ensure this line references the output
+  source     = "./modules/rds"
+  db_name    = "url_mappings"
+  db_username = "url_shortener"
+  db_password = "fortheapp"
+  allocated_storage = 5
+  subnet_ids = module.vpc.private_subnet_ids  # Correct reference
+  eks_worker_sg_id = module.eks.worker_sg_id
+  vpc_id          = module.vpc.vpc_id
 }
+
 
 
 

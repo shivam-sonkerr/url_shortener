@@ -31,3 +31,33 @@ resource "aws_eks_node_group" "workers" {
 
   instance_types = ["t3.medium"]  # Use a basic instance type
 }
+
+
+resource "aws_security_group" "eks_worker_sg" {
+  name        = "eks-worker-nodes-sg"
+  description = "Allow inbound traffic to EKS worker nodes"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 1025
+    to_port     = 65535
+    protocol    = "tcp"
+    cidr_blocks = [var.vpc_cidr_block]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
+
+output "worker_sg_id" {
+  description = "Security Group ID for EKS worker nodes"
+  value       = aws_security_group.eks_worker_sg.id
+}
+
+
