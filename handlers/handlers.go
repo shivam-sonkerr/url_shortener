@@ -79,6 +79,7 @@ func URLPost(c *gin.Context) {
 		"message":  "Short URL created successfully",
 		"shortURL": shortURL,
 	})
+	fmt.Println("Short URL: ", shortURL)
 	c.Redirect(http.StatusMovedPermanently, fmt.Sprintf("http://localhost:8080/redirect/%s", shortURL))
 }
 
@@ -122,7 +123,7 @@ func ShortenAndRedirect(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(http.StatusMovedPermanently, request.OriginalURL)
+	c.JSON(http.StatusOK, gin.H{"shortURL": shortURL})
 }
 
 // Helper Functions
