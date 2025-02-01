@@ -1,10 +1,3 @@
-# variable "security_group_ids" {
-#   description = "Security group IDs to attach to EKS worker nodes"
-#   type        = list(string)
-# }
-
-
-
 resource "aws_eks_cluster" "main" {
   name     = "url-shortener"
   role_arn = var.eks_role_arn

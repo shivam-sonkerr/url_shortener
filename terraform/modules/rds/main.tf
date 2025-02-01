@@ -2,10 +2,6 @@ provider "aws" {
   region = var.aws_region  # Adjust the region as needed
 }
 
-
-
-
-
 resource "aws_security_group" "rds_sg" {
   vpc_id = var.vpc_id
   name        = "rds-mysql-sg"
