@@ -31,9 +31,6 @@ func main() {
 		c.File("./frontend/index.html") // Serve the index.html as default page
 	})
 
-	// Ping route
-	r.GET("/ping", handlers.HandlerPing)
-
 	// URL shortening and redirection routes
 	r.POST("/shorten", handlers.URLPost)
 	r.POST("/shorten-and-redirect", handlers.ShortenAndRedirect)

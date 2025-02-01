@@ -10,11 +10,6 @@ import (
 	"url_shortener/models"
 )
 
-// Ping Handler
-func HandlerPing(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "pong"})
-}
-
 // URL Redirect Handler
 func RedirectURLHandler(c *gin.Context) {
 	db, err := dbutils.ConnectDB()
