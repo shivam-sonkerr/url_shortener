@@ -10,7 +10,6 @@ COPY .. .
 
 RUN go build -o url-shortener ./api-services/main.go
 
-# Stage 2: Create a lightweight runtime image
 FROM alpine:latest
 WORKDIR /app
 
