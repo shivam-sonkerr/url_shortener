@@ -95,7 +95,7 @@ func URLPost(c *gin.Context) {
 	log.Println("Short URL created:", shortURL)
 	c.JSON(http.StatusCreated, gin.H{
 		"message":       "Short URL created successfully",
-		"shortened_url": fmt.Sprintf("http://localhost:8080/redirect/%s", shortURL),
+		"shortened_url": fmt.Sprintf("/redirect/%s", shortURL),
 	})
 }
 
