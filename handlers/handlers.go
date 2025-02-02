@@ -11,7 +11,7 @@ import (
 	"url_shortener/models"
 )
 
-// URL Redirect Handler
+// RedirectURLHandler URL Redirect Handler
 func RedirectURLHandler(c *gin.Context) {
 	log.Println("RedirectURLHandler called")
 
