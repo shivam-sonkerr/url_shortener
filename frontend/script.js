@@ -20,7 +20,7 @@ document.getElementById("url-form").addEventListener("submit", async function (e
         if (!response.ok) throw new Error("Failed to shorten URL.");
 
         const data = await response.json();
-        shortUrlResult.innerHTML = `<a href="${data.shortened_url}" target="_blank">${data.shortened_url}</a>`; // Use shortened_url here
+        shortUrlResult.innerHTML = `<a href="${data.shortened_url}" target="_blank">${data.shortened_url}</a>`;
         shortUrlDiv.classList.remove("hidden");
 
         copyBtn.addEventListener("click", () => {

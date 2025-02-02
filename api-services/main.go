@@ -24,11 +24,11 @@ func main() {
 
 	r := gin.Default()
 
-	r.Static("/static", "./frontend") // Serve static files under /static path
+	r.Static("/static", "./frontend")
 
 	// Default route to serve index.html
 	r.GET("/", func(c *gin.Context) {
-		c.File("./frontend/index.html") // Serve the index.html as default page
+		c.File("./frontend/index.html")
 	})
 
 	// URL shortening and redirection routes
@@ -36,7 +36,7 @@ func main() {
 	r.POST("/shorten-and-redirect", handlers.ShortenAndRedirect)
 
 	// Route to handle the redirection of short URLs
-	r.GET("/redirect/:shortURL", handlers.RedirectURLHandler) // This will capture short URL and redirect
+	r.GET("/redirect/:shortURL", handlers.RedirectURLHandler)
 
 	r.Run(":8080")
 }
