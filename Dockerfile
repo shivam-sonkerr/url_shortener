@@ -13,6 +13,8 @@ RUN go build -o url-shortener ./api-services/main.go
 FROM alpine:latest
 WORKDIR /app
 
+RUN apk add --no-cache ca-certificates
+
 # Copy the binary from the builder stage
 COPY --from=builder /app/url-shortener .
 
