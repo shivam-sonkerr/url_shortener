@@ -4,22 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>URL Shortener</title>
-    <!-- Updated link to style.css -->
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 <div class="container">
     <h1>URL Shortener</h1>
+    <p>Enter a URL below</p>
+
     <form id="url-form">
-        <input type="text" id="original-url" placeholder="Enter URL" required>
-        <button type="submit">Shorten URL</button>
+        <input type="text" id="original-url" placeholder="Enter URL here..." required>
+        <button type="submit">Shorten</button>
     </form>
+
     <div id="short-url" class="hidden">
         <h2>Shortened URL:</h2>
         <p id="short-url-result"></p>
+        <button id="copy-btn">Copy URL</button>
     </div>
+
+    <div id="error-message" class="hidden"></div>
 </div>
-<!-- Updated script src path -->
+
 <script src="/static/script.js"></script>
 </body>
 </html>

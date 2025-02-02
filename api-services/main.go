@@ -36,7 +36,7 @@ func main() {
 	r.POST("/shorten-and-redirect", handlers.ShortenAndRedirect)
 
 	// Route to handle the redirection of short URLs
-	r.GET("/:shortURL", handlers.RedirectURLHandler) // This will capture short URL and redirect
+	r.GET("/redirect/:shortURL", handlers.RedirectURLHandler) // This will capture short URL and redirect
 
 	r.Run(":8080")
 }

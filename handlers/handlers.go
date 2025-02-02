@@ -38,6 +38,8 @@ func URLPost(c *gin.Context) {
 		return
 	}
 
+	fmt.Println("Parsed Request:", request)
+
 	if !isValidURL(request.OriginalURL) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid URL format"})
 		return
@@ -71,11 +73,12 @@ func URLPost(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
-		"message":  "Short URL created successfully",
-		"shortURL": shortURL,
+		"message":       "Short URL created successfully",
+		"shortened_url": fmt.Sprintf("http://localhost:8080/redirect/%s", shortURL),
 	})
+
 	fmt.Println("Short URL: ", shortURL)
-	c.Redirect(http.StatusMovedPermanently, fmt.Sprintf("http://localhost:8080/redirect/%s", shortURL))
+	//c.Redirect(http.StatusMovedPermanently, fmt.Sprintf("http://localhost:8080/redirect/%s", shortURL))
 }
 
 // Shorten and Redirect Handler
@@ -118,7 +121,10 @@ func ShortenAndRedirect(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"shortURL": shortURL})
+	c.JSON(http.StatusOK, gin.H{
+		"shortened_url": fmt.Sprintf("http://localhost:8080/redirect/%s", shortURL),
+	})
+
 }
 
 // Helper Functions
