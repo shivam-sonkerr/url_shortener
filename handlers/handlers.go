@@ -148,7 +148,7 @@ func ShortenAndRedirect(c *gin.Context) {
 
 	log.Println("Shortened URL generated:", shortURL)
 	c.JSON(http.StatusOK, gin.H{
-		"shortened_url": fmt.Sprintf("http://localhost:8080/redirect/%s", shortURL),
+		"shortened_url": fmt.Sprintf("/redirect/%s", shortURL),
 	})
 }
 
