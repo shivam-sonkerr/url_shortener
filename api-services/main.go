@@ -31,12 +31,12 @@ func main() {
 		c.File("./frontend/index.html")
 	})
 
-	// URL shortening and redirection routes
-	r.POST("/shorten", handlers.URLPost)
-	r.POST("/shorten-and-redirect", handlers.ShortenAndRedirect)
+	// URL shortening and redirection routes and also passed db as a variable
+	r.POST("/shorten", func(c *gin.Context) { handlers.URLPost(c, db) })
+	r.POST("/shorten-and-redirect", func(c *gin.Context) { handlers.ShortenAndRedirect(c, db) })
 
 	// Route to handle the redirection of short URLs
-	r.GET("/redirect/:shortURL", handlers.RedirectURLHandler)
+	r.GET("/redirect/:shortURL", func(c *gin.Context) { handlers.RedirectURLHandler(c, db) })
 
 	r.Run(":8080")
 }

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -12,7 +13,7 @@ import (
 )
 
 // RedirectURLHandler URL Redirect Handler
-func RedirectURLHandler(c *gin.Context) {
+func RedirectURLHandler(c *gin.Context, db *sql.DB) {
 	log.Println("RedirectURLHandler called")
 
 	db, err := dbutils.ConnectDB()
@@ -21,7 +22,6 @@ func RedirectURLHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to connect to the database"})
 		return
 	}
-	defer db.Close()
 
 	shortURL := c.Param("shortURL")
 	log.Println("Received short URL:", shortURL)
@@ -44,7 +44,7 @@ func RedirectURLHandler(c *gin.Context) {
 }
 
 // URL Post Handler
-func URLPost(c *gin.Context) {
+func URLPost(c *gin.Context, db *sql.DB) {
 	log.Println("URLPost handler called")
 
 	var request models.URLMappings
@@ -68,7 +68,6 @@ func URLPost(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to connect to database."})
 		return
 	}
-	defer db.Close()
 
 	var shortURL string
 	for {
@@ -100,7 +99,7 @@ func URLPost(c *gin.Context) {
 }
 
 // Shorten and Redirect Handler
-func ShortenAndRedirect(c *gin.Context) {
+func ShortenAndRedirect(c *gin.Context, db *sql.DB) {
 	log.Println("ShortenAndRedirect handler called")
 
 	var request models.URLMappings
@@ -122,7 +121,6 @@ func ShortenAndRedirect(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to connect to the database"})
 		return
 	}
-	defer db.Close()
 
 	var shortURL string
 	for {
