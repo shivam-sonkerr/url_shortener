@@ -21,7 +21,6 @@ COPY --from=builder /app/url-shortener .
 
 COPY --from=builder /app/frontend ./frontend
 
-# Expose the port the app runs on
 EXPOSE 8080
 
 # Start the app

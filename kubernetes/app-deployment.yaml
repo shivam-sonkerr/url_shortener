@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: url-shortener-app
-          image: maverick8738/url_shortener:latest
+          image: maverick8738/url-shortener:latest
           ports:
           - containerPort: 8080
           env:
