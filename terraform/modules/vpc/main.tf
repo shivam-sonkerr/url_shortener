@@ -36,10 +36,8 @@ resource "aws_subnet" "public" {
 }
 
 
-# Create a NAT Gateway in one of the public subnets
 resource "aws_eip" "nat" {
   count = var.private_subnet_count
-  vpc   = true
 }
 
 resource "aws_nat_gateway" "nat" {
@@ -97,7 +95,7 @@ resource "aws_route_table" "public" {
   }
 }
 
-# Associate Public Subnets with the Public Route Table
+# Associating Public Subnets with the Public Route Table
 resource "aws_route_table_association" "public" {
   count          = length(aws_subnet.public)
   subnet_id      = element(aws_subnet.public[*].id, count.index)

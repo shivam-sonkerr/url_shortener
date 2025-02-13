@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{.Release.Name}}-app-external-service
+  labels:
+    app: {{.Chart.Name}}
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: {{.Values.service.appPort}}
+  selector:
+    app: {{.Chart.Name}}

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Release.Name}}-app
+  labels:
+    app: {{.Chart.Name}}
+spec:
+  replicas: {{.Values.replicaCount}}
+  selector:
+    matchLabels:
+      app: {{ .Chart.Name}}
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name}}
+    spec:
+      containers:
+        - name: url-shortener-app
+          image: maverick8738/url-shortener:latest
+          ports:
+          - containerPort: 8080
+          env:
+            - name: DB_HOST
+              value: "db-service"
+            - name: DB_PORT
+              value: "{{.Release.Name}}-db-service"
+            - name: DB_USER
+              value: "{{.Values.db.user}}"
+            - name: DB_PASSWORD
+              value: "{{.Values.db.password}}"
+            - name: DB_NAME
+              value: "{{.Values.db.name}}"

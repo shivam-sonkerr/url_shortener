@@ -1,5 +1,5 @@
 provider "aws" {
-  region = var.aws_region  # Adjust the region as needed
+  region = var.aws_region
 }
 
 resource "aws_security_group" "rds_sg" {

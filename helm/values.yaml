@@ -1,0 +1,19 @@
+
+replicaCount: 3
+
+image:
+  repository: maverick8738/url-shortener
+  tag: latest
+
+service:
+  appPort: 8080
+  dbPort: 3306
+
+db:
+  name: url_mappings
+  user: root
+  password: root
+
+ingress:
+  enabled: false
+

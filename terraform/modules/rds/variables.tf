@@ -66,7 +66,7 @@ variable "subnet_ids" {
 variable "private_subnet_azs" {
   description = "Availability Zones for private subnets"
   type        = list(string)
-  default     = ["us-west-2a", "us-west-2b"]  # Explicitly define AZs
+  default     = ["us-west-2a", "us-west-2b"]
 }
 
 variable "eks_worker_sg_id" {

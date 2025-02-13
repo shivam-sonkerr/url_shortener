@@ -58,6 +58,14 @@ jobs:
           terraform apply -auto-approve
         working-directory: terraform
 
+
+      # Install Helm
+      - name: Install Helm
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          helm version
+
+
       # Kubernetes Setup
       - name: Install kubectl
         run: |
@@ -69,6 +77,11 @@ jobs:
       - name: Kube Config
         run: aws eks --region us-west-2 update-kubeconfig --name url-shortener
 
-      # Deployment
-      - name: Deployment to Kubernetes
-        run: kubectl apply -f ./kubernetes
+#      # Deployment
+#      - name: Deployment to Kubernetes
+#        run: kubectl apply -f ./kubernetes
+
+      - name: Deploy Using Helm
+        run: |
+          helm upgrade --install url-shortener ./helm --namespace default
+

@@ -1,9 +1,9 @@
 provider "aws" {
-  region = var.aws_region  # Adjust the region as needed
+  region = var.aws_region
 }
 
 resource "aws_security_group" "eks_worker_sg" {
-  vpc_id = module.vpc.vpc_id  # Reference to the VPC ID
+  vpc_id = module.vpc.vpc_id
 
   egress {
     cidr_blocks = ["0.0.0.0/0"]
@@ -36,7 +36,7 @@ variable "aws_region" {
 # VPC Module
 module "vpc" {
   source               = "./modules/vpc"
-  cidr_block           = "10.0.0.0/16"  # Adjust the CIDR as needed
+  cidr_block           = "10.0.0.0/16"
   private_subnet_count = 2  # 2 private subnets across different AZs
   public_subnet_count  = 2  # 2 public subnets across different AZs
   private_subnet_cidrs = ["10.0.1.0/24", "10.0.2.0/24"]  # 2 subnets in different AZs
@@ -62,7 +62,7 @@ module "rds" {
   db_username = "url_shortener"
   db_password = "fortheapp"
   allocated_storage = 5
-  subnet_ids = module.vpc.private_subnet_ids  # Correct reference
+  subnet_ids = module.vpc.private_subnet_ids
   eks_worker_sg_id = module.eks.worker_sg_id
   vpc_id          = module.vpc.vpc_id
 }
